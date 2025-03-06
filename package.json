@@ -1,24 +1,30 @@
 {
   "name": "memoradb",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "description": "A lightweight in-memory key-value store similar to Redis",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
-    "memora": "index.js"
+    "memora": "dist/index.js"
   },
   "scripts": {
-    "start": "node index.js",
-    "publish": "node -r dotenv/config npm publish"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build",
+    "publish": "npm publish --access public"
   },
   "keywords": [
     "redis",
     "in-memory-db",
     "key-value-store",
-    "memora"
+    "memoradb"
   ],
   "author": "Bhavya Dang",
   "license": "MIT",
   "devDependencies": {
-    "dotenv": "^16.4.7"
+    "@types/node": "^22.13.9",
+    "dotenv": "^16.4.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }

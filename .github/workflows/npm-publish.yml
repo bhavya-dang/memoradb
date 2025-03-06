@@ -3,7 +3,7 @@ name: Publish to NPM
 on:
   push:
     branches:
-      - main # Runs only on push to main branch
+      - master # Runs only on push to main branch
   workflow_dispatch: # Allows manual triggering
 
 jobs:
@@ -23,8 +23,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build package (if needed)
-        run: npm run build || echo "No build step"
+      - name: Compile TypeScript
+        run: npm run build # Ensures the TypeScript code compiles before publishing
+
+      - name: Authenticate with NPM
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
       - name: Publish to NPM
         run: npm publish --access public

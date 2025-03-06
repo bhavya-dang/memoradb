@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "module": "CommonJS",
+    "target": "ES6",
+    "strict": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "jsx": "preserve",
+    "skipLibCheck": true
+  },
+  "include": ["index.ts"]
+}
