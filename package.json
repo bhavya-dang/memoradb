@@ -1,6 +1,6 @@
 {
   "name": "memoradb",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A lightweight in-memory key-value store similar to Redis",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
