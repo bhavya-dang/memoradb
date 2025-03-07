@@ -4,7 +4,7 @@ import net from "net";
 
 const port: number = process.argv[2] ? parseInt(process.argv[2]) : 6379;
 
-class Memora {
+class MemoraDB {
   private store: Map<string, string | number>;
   private expirations: Map<string, number>;
 
@@ -87,78 +87,10 @@ class Memora {
   }
 }
 
-class MemoraClient {
-  private client: net.Socket;
-  private host: string;
-  private port: number;
-
-  constructor(host: string = "localhost", port: number = 6379) {
-    this.host = host;
-    this.port = port;
-    this.client = new net.Socket();
-  }
-
-  connect(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.client.connect(this.port, this.host, resolve);
-      this.client.on("error", reject);
-    });
-  }
-
-  private sendCommand(command: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      this.client.once("data", (data) => resolve(data.toString().trim()));
-      this.client.write(command + "\n");
-    });
-  }
-
-  async set(
-    key: string,
-    value: string | number,
-    expiry: number | null = null
-  ): Promise<string> {
-    return expiry
-      ? this.sendCommand(`SET ${key} ${value} EX ${expiry}`)
-      : this.sendCommand(`SET ${key} ${value}`);
-  }
-
-  async get(key: string): Promise<string> {
-    return this.sendCommand(`GET ${key}`);
-  }
-
-  async del(key: string): Promise<string> {
-    return this.sendCommand(`DEL ${key}`);
-  }
-
-  async expire(key: string, seconds: number): Promise<string> {
-    return this.sendCommand(`EXPIRE ${key} ${seconds}`);
-  }
-
-  async ttl(key: string): Promise<string> {
-    return this.sendCommand(`TTL ${key}`);
-  }
-
-  async persist(key: string): Promise<string> {
-    return this.sendCommand(`PERSIST ${key}`);
-  }
-
-  async flushAll(): Promise<string> {
-    return this.sendCommand(`FLUSHALL`);
-  }
-
-  async incr(key: string): Promise<string> {
-    return this.sendCommand(`INCR ${key}`);
-  }
-
-  async decr(key: string): Promise<string> {
-    return this.sendCommand(`DECR ${key}`);
-  }
-}
-
-const db = new Memora();
+const db = new MemoraDB();
 
 const server = net.createServer((socket) => {
-  socket.write(`Memora Server Connected\nmemora:${port}> `);
+  socket.write(`MemoraDB Server Connected\nMemoraDB:${port}> `);
   let buffer = "";
 
   socket.on("data", (data) => {
@@ -206,7 +138,7 @@ const server = net.createServer((socket) => {
           default:
             response = "Unknown command";
         }
-        socket.write(response + "\nmemora:" + port + "> ");
+        socket.write(response + "\nMemoraDB:" + port + "> ");
       });
     }
   });
@@ -215,7 +147,7 @@ const server = net.createServer((socket) => {
 });
 
 server.listen(port, () => {
-  console.log(`Memora Server listening on port ${port}`);
+  console.log(`MemoraDB Server listening on port ${port}`);
 });
 
-export { MemoraClient };
+export default MemoraDB;

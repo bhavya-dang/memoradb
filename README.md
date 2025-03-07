@@ -31,7 +31,7 @@ npx memoradb 7000
 
 This will start the server on port `7000`.
 
-### Using MemoraDB in a Node.js Project
+<!-- ### Using MemoraDB in a Node.js Project
 
 You can use Memora as a client inside your Node.js application:
 
@@ -51,7 +51,7 @@ import { MemoraClient } from "memoradb";
     console.log(await memora.get("user")); // (nil)
   }, 11000);
 })();
-```
+``` -->
 
 ### Memora Commands
 
