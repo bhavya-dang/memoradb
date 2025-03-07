@@ -29,10 +29,15 @@ class Memora {
     return this.store.has(key) ? this.store.get(key)! : null;
   }
 
-  del(key: string): string {
-    this.store.delete(key);
-    this.expirations.delete(key);
-    return "OK";
+  del(...keys: string[]): number {
+    let deleted = 0;
+    keys.forEach((key) => {
+      if (this.store.delete(key)) {
+        this.expirations.delete(key);
+        deleted++;
+      }
+    });
+    return deleted;
   }
 
   expire(key: string, seconds: number): number {
@@ -98,7 +103,7 @@ class MemoraClient {
     this.client = new net.Socket();
   }
 
-  connect(): Promise<void> {
+  async connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.client.connect(this.port, this.host, resolve);
       this.client.on("error", reject);
@@ -115,43 +120,56 @@ class MemoraClient {
   async set(
     key: string,
     value: string | number,
-    expiry: number | null = null
+    expiry?: number
   ): Promise<string> {
+    // Ensure value is stored as a proper string
+    const stringValue =
+      typeof value === "string" ? value : JSON.stringify(value);
     return expiry
-      ? this.sendCommand(`SET ${key} ${value} EX ${expiry}`)
-      : this.sendCommand(`SET ${key} ${value}`);
+      ? this.sendCommand(`SET ${key} ${stringValue} EX ${expiry}`)
+      : this.sendCommand(`SET ${key} ${stringValue}`);
   }
 
-  async get(key: string): Promise<string> {
-    return this.sendCommand(`GET ${key}`);
+  async get(key: string): Promise<string | null> {
+    let result = await this.sendCommand(`GET ${key}`);
+
+    // Trim unnecessary characters (newlines, spaces)
+    result = result.trim();
+
+    // Ensure it's valid JSON
+    if (!result.startsWith("{") && !result.startsWith("[")) {
+      return null;
+    }
+
+    return result === "(nil)" ? null : result;
   }
 
-  async del(key: string): Promise<string> {
-    return this.sendCommand(`DEL ${key}`);
+  async del(...keys: string[]): Promise<number> {
+    return parseInt(await this.sendCommand(`DEL ${keys.join(" ")}`), 10);
   }
 
-  async expire(key: string, seconds: number): Promise<string> {
-    return this.sendCommand(`EXPIRE ${key} ${seconds}`);
+  async expire(key: string, seconds: number): Promise<number> {
+    return parseInt(await this.sendCommand(`EXPIRE ${key} ${seconds}`), 10);
   }
 
-  async ttl(key: string): Promise<string> {
-    return this.sendCommand(`TTL ${key}`);
+  async ttl(key: string): Promise<number> {
+    return parseInt(await this.sendCommand(`TTL ${key}`), 10);
   }
 
-  async persist(key: string): Promise<string> {
-    return this.sendCommand(`PERSIST ${key}`);
+  async persist(key: string): Promise<number> {
+    return parseInt(await this.sendCommand(`PERSIST ${key}`), 10);
   }
 
   async flushAll(): Promise<string> {
-    return this.sendCommand(`FLUSHALL`);
+    return this.sendCommand("FLUSHALL");
   }
 
-  async incr(key: string): Promise<string> {
-    return this.sendCommand(`INCR ${key}`);
+  async incr(key: string): Promise<number> {
+    return parseInt(await this.sendCommand(`INCR ${key}`), 10);
   }
 
-  async decr(key: string): Promise<string> {
-    return this.sendCommand(`DECR ${key}`);
+  async decr(key: string): Promise<number> {
+    return parseInt(await this.sendCommand(`DECR ${key}`), 10);
   }
 }
 
@@ -183,7 +201,7 @@ const server = net.createServer((socket) => {
             response = db.get(input[1])?.toString() || "(nil)";
             break;
           case "DEL":
-            response = db.del(input[1]);
+            response = db.del(...input.slice(1)).toString();
             break;
           case "EXPIRE":
             response = db.expire(input[1], parseInt(input[2])).toString();
@@ -218,4 +236,4 @@ server.listen(port, () => {
   console.log(`Memora Server listening on port ${port}`);
 });
 
-export { MemoraClient };
+export default MemoraClient;

@@ -1,6 +1,24 @@
 # MemoraDB
 
-MemoraDB is a lightweight, type safe, Redis-like in-memory key-value store written in TypeScript. It supports operations like `SET`, `GET`, `EXPIRE`, and more.
+![TypeScript](https://img.shields.io/badge/typescript-%2300ADD8.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
+![NPM Downloads](https://img.shields.io/npm/dw/memoradb?style=for-the-badge)
+<br/>
+
+MemoraDB is a lightweight, type safe, Redis-like, in-memory key-value store written in TypeScript. It currently supports operations like `SET`, `GET`, `EXPIRE`, and more.
+
+It is my attempt to learn more about Redis and TypeScript.
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Running MemoraDB Server](#running-memoradb-server)
+  - [Connecting via TCP (Netcat / Telnet)](#connecting-via-tcp-netcat--telnet)
+  - [MemoraDB Commands](#memoradb-commands)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
@@ -9,7 +27,7 @@ MemoraDB is a lightweight, type safe, Redis-like in-memory key-value store writt
 - Basic Redis-like commands (`SET`, `GET`, `DEL`, `INCR`, `DECR`, `FLUSHALL`, etc.)
 - Lightweight and easy to integrate
 - TCP server for remote communication
-- TypeScript support with an easy-to-use client library
+- TypeScript support with an easy-to-use client library (WIP)
 
 ## Installation
 
@@ -21,7 +39,7 @@ npm install memoradb
 
 ## Usage
 
-### Running Memora Server
+### Running MemoraDB Server
 
 You can start the Memora server using:
 
@@ -30,6 +48,22 @@ npx memoradb 7000
 ```
 
 This will start the server on port `7000`.
+
+### Connecting via TCP (Netcat / Telnet)
+
+If MemoraDB is running as a TCP server, you can interact with it using `netcat`:
+
+```sh
+nc localhost 7000
+```
+
+Then, you can enter commands like:
+
+```sh
+SET name MemoraDB
+GET name
+INCR counter
+```
 
 ### Using MemoraDB in a Node.js Project
 
@@ -53,9 +87,9 @@ import { MemoraClient } from "memoradb";
 })();
 ```
 
-### Memora Commands
+### MemoraDB Commands
 
-Memora supports the following commands:
+MemoraDB supports the following commands:
 
 | Command                      | Description                                   |
 | ---------------------------- | --------------------------------------------- |
@@ -68,32 +102,6 @@ Memora supports the following commands:
 | `FLUSHALL`                   | Deletes all keys                              |
 | `INCR key`                   | Increments a numerical key                    |
 | `DECR key`                   | Decrements a numerical key                    |
-
-### Connecting via TCP (Netcat / Telnet)
-
-If Memora is running as a TCP server, you can interact with it using `netcat`:
-
-```sh
-nc localhost 7000
-```
-
-Then, you can enter commands like:
-
-```sh
-SET name Memora
-GET name
-INCR counter
-```
-
-### Running Memora Locally
-
-To run Memora locally:
-
-```sh
-node index.js 6379
-```
-
-This starts the server on port `6379`.
 
 ## Contributing
 
