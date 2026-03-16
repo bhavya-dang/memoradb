@@ -2,7 +2,8 @@
 
 ![TypeScript](https://img.shields.io/badge/typescript-%2300ADD8.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
-![NPM Downloads](https://img.shields.io/npm/dw/memoradb?style=for-the-badge)
+![NPM Downloads](https://img.shields.io/npm/dy/memoradb?style=for-the-badge)
+
 <br/>
 
 MemoraDB is a lightweight, type safe, Redis-like, in-memory key-value store written in TypeScript. It currently supports operations like `SET`, `GET`, `EXPIRE`, and more.
